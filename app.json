@@ -26,10 +26,16 @@
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
-      ]
+      ],
+      "package": "com.waheedaslam.SPLIT"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c82936eb-1215-4285-a7d1-8f9305b43498"
+      }
     }
   }
 }
