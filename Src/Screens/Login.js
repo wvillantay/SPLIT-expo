@@ -17,6 +17,8 @@ const Login = ({ navigation }) => {
 
   const onLogin = () => {
  
+    navigation.navigate("Home");
+ 
     if (email == "" || password == "") {
       Alert.alert("Alert !", "please make sure you have fill all fields");
     } else {

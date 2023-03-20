@@ -9,7 +9,11 @@ import Signup from './Src/Screens/Signup';
 import Home from './Src/Screens/Home';
 import app from "./Src/Firebase"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import Scanning from './Src/Screens/Scanning';
+import CreateGroup from './Src/Screens/CreateGroup';
+import GroupDetail from './Src/Screens/GroupDetail';
+import AddExpense from './Src/Screens/AddExpense';
+import ScannedSlip from './Src/Screens/ScannedSlip';
+import Calculatingsummary from './Src/Screens/Calculatingsummary';
 export default function App() {
   const [loading, setisloading] = useState(true);
   const [user, setUser] = useState(null);
@@ -51,6 +55,14 @@ console.log(user?.email);
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="CreateGroup" component={CreateGroup} />
+            <Stack.Screen name="GroupDetail" component={GroupDetail} />
+            <Stack.Screen name="AddExpense" component={AddExpense} />
+            <Stack.Screen name="ScannedSlip" component={ScannedSlip} />
+            <Stack.Screen name="Calculatingsummary" component={Calculatingsummary} />
+
+
+
           </Stack.Navigator>
         </NavigationContainer>
       </View>
