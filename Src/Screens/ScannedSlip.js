@@ -55,19 +55,19 @@ const ScannedSlip = ({ navigation, route }) => {
       });
       const result = await response.json();
       console.log(result, "result,:.......");
-      if (result?.ErrorMessage) {
-        Alert.alert("Sorry", result?.ErrorMessage[0]);
-        setisLoading(false);
-        setCapturedImage(null);
-      } else if (result?.ParsedResults) {
-        setTextReaded(result);
-        setisLoading(false);
-        setCapturedImage(null);
-      } else {
-        setisLoading(false);
-        setCapturedImage(null);
-        alert("Something wrong tryagain");
-      }
+      // if (result?.ErrorMessage) {
+      //   Alert.alert("Sorry", result?.ErrorMessage[0]);
+      //   setisLoading(false);
+      //   setCapturedImage(null);
+      // } else if (result?.ParsedResults) {
+      //   setTextReaded(result);
+      //   setisLoading(false);
+      //   setCapturedImage(null);
+      // } else {
+      //   setisLoading(false);
+      //   setCapturedImage(null);
+      //   alert("Something wrong tryagain");
+      // }
     } catch (error) {
       setisLoading(false);
       setCapturedImage(null);

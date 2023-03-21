@@ -6,11 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -18,7 +14,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package":"com.waheedaslam.SPLIT",
+      "package":"com.Walliam.SPLIT",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -28,7 +24,7 @@
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
       ],
-      "package": "com.waheedaslam.SPLIT"
+      "package": "com.Walliam.SPLIT"
     },
     "web": {
       "favicon": "./assets/favicon.png"
