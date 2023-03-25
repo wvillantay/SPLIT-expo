@@ -35,7 +35,7 @@ const Signup = ({ navigation }) => {
   const [cpassword, setcpassword] = useState("");
   const db = getFirestore(app);
 
-  const onSignUp = () => {
+  const onSignUp = async() => {
     if (
       userName == "" ||
       email == "" ||
@@ -51,8 +51,8 @@ const Signup = ({ navigation }) => {
         .then((res) => {
           console.log(res?.user?.uid, "......");
           if (res?.user?.uid) {
-            const userref = collection(db, "userprofiles");
-            addDoc(userref, {
+            // const userref = collection(db, "userprofiles");
+             setDoc(doc(db, "userprofiles",res?.user?.uid), {
               name: userName,
               email: email,
               phone: phone,

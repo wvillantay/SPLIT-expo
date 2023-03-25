@@ -50,15 +50,18 @@ const CreateGroup = ({ navigation }) => {
     } else if (Pascode == "") {
       Alert.alert("Alert!", "Enter Group Passcode");
     } else {
-      const userref = collection(db, "groups");
-      addDoc(userref, {
+      const userref = collection(db, "groups")
+      console.log(userref);
+      const uniqueId = Math.random().toString(36).substring(2) + Date.now().toString(36)
+      setDoc(doc(db, "groups", uniqueId), {
         name: Name,
         Pascode: Pascode,
         GrouName: GrouName,
         FriendsList: FriendsList,
         authorEmail: Auth?.currentUser?.email,
         authorID: Auth?.currentUser?.uid,
-        total:0
+        total:0,
+        uid:uniqueId
       })
         .then((docRef) => {
             setFriend("")
@@ -73,6 +76,7 @@ const CreateGroup = ({ navigation }) => {
     }
   };
 
+  console.log(FriendsList);
   
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -227,7 +231,7 @@ const CreateGroup = ({ navigation }) => {
                 backgroundColor: "#dfe9e9",
               }}
               onPress={() => {
-                setFriendsList([...FriendsList, Friend]);
+                setFriendsList([{...FriendsList,email:Friend}]);
                 setFriend("");
               }}
             >

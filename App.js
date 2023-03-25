@@ -14,6 +14,9 @@ import GroupDetail from './Src/Screens/GroupDetail';
 import AddExpense from './Src/Screens/AddExpense';
 import ScannedSlip from './Src/Screens/ScannedSlip';
 import Calculatingsummary from './Src/Screens/Calculatingsummary';
+import AddMannully from './Src/Screens/AddMannully';
+import ItemForms from './Src/Screens/ItemsForms';
+import AddMember from './Src/Screens/AddMember';
 export default function App() {
   const [loading, setisloading] = useState(true);
   const [user, setUser] = useState(null);
@@ -60,6 +63,12 @@ console.log(user?.email);
             <Stack.Screen name="AddExpense" component={AddExpense} />
             <Stack.Screen name="ScannedSlip" component={ScannedSlip} />
             <Stack.Screen name="Calculatingsummary" component={Calculatingsummary} />
+            <Stack.Screen name="AddMannully" component={AddMannully} />
+            <Stack.Screen name="ItemForms" component={ItemForms} />
+            <Stack.Screen name="AddMember" component={AddMember} />
+
+
+
 
 
 

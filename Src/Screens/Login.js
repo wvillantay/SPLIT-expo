@@ -15,10 +15,7 @@ const Login = ({ navigation }) => {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
-  const onLogin = () => {
- 
-    navigation.navigate("Home");
- 
+  const onLogin = () => { 
     if (email == "" || password == "") {
       Alert.alert("Alert !", "please make sure you have fill all fields");
     } else {

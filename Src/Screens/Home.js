@@ -8,6 +8,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import BottomLayer from "..//Assets/BottomLayer.svg";
 import Logo from "../Assets/Logo.svg";
@@ -32,7 +33,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { FlatList } from "react-native";
 
 const Home = ({ navigation }) => {
@@ -43,6 +44,7 @@ const Home = ({ navigation }) => {
   const [TextReaded, setTextReaded] = useState("");
   const db = getFirestore(app);
   const Auth = getAuth(app);
+  const userUid=getAuth(app).currentUser.uid
   const colors = [
     { bg: "red", textColor: "white" },
     { bg: "green", textColor: "white" },
@@ -57,81 +59,36 @@ const Home = ({ navigation }) => {
     "https://th.bing.com/th/id/R.de2135625ce46525e09320ba02e86032?rik=03qOiI9B0N9KfA&pid=ImgRaw&r=0",
     "https://th.bing.com/th/id/R.8ecb8e1845f04b543161e388bef36334?rik=tXj9313wlJX5Tw&pid=ImgRaw&r=0",
   ];
-  const onCamera = async () => {
-    setisShow(false);
-    setTimeout(async () => {
-      setTimeout(async () => {
-        ImagePicker.launchCameraAsync({}).then(async (response) => {
-          if (response.canceled) {
-          } else {
-            setimage(response);
-          }
-        });
-      });
-    }, 1000);
-  };
+ 
 
   useEffect(() => {
     const q = query(collection(db, "groups"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const groups = [];
       querySnapshot.forEach((doc) => {
-        groups.push(doc.data());
+        if(doc.data()){
+          if(doc.data().authorID==userUid){
+             groups.push(doc.data());
+          }else{
+            doc.data()?.FriendsList?.forEach((val)=>{
+              if(val.email==getAuth(app).currentUser.email){
+             groups.push(doc.data());
+              }
+            })
+          }
+        }
+        console.log(doc.data().authorID);
       });
       setallGroups(groups);
     });
   }, []);
 
-  const onGallary = async () => {
-    setisShow(false);
-    setTimeout(async () => {
-      ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 1,
-      }).then(async (response) => {
-        if (response.canceled) {
-        } else {
-          setimage(response);
-        }
-      });
-    }, 1000);
-  };
+  
 
-  console.log(image?.assets[0]);
-  const ScannedImage = async () => {
-    const formData = new FormData();
-    formData.append("image", {
-      uri: image?.assets[0].uri,
-      type: "image/jpg",
-      name: "test.jpg",
-    });
-    setisLoading(true);
-    try {
-      const response = await fetch("https://tecnorn.online/api/V1/report/ocr", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Accept: "application/json",
-        },
-        body: formData,
-      });
-
-      const result = await response.json();
-      if (result?.ErrorMessage) {
-        Alert.alert("Sorry", result?.ErrorMessage[0]);
-        setisLoading(false);
-        setimage(null);
-      } else {
-        setTextReaded(result);
-        setisLoading(false);
-        setimage(null);
-      }
-    } catch (error) {
-      setisLoading(false);
-      // alert("Something wrong tryagain");
-      console.error(error, "......");
-    }
-  };
+ const onGroupPress=(item)=>{
+// console.log(item,"....");
+navigation.navigate("GroupDetail",item)
+ }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -155,12 +112,12 @@ const Home = ({ navigation }) => {
               const randomIndex = Math.floor(Math.random() * colors.length);
               const randomColor = colors[randomIndex];
               const randomImage = images[randomIndex];
-              console.log(item);
+              console.log(item?.GrouName);
               return (
                 <TouchableOpacity
 
                 onPress={()=>{
-                  navigation.navigate("GroupDetail",item)
+                 onGroupPress(item)
                 }}
                   style={{
                     height: 160,
@@ -245,14 +202,7 @@ const Home = ({ navigation }) => {
           <ProfileImage />
         </TouchableOpacity>
       </View>
-      <PermissionPop
-        isOpen={isShow}
-        onCamera={() => onCamera()}
-        onGallary={() => onGallary()}
-        onClose={() => {
-          setisShow(false);
-        }}
-      />
+    
     </SafeAreaView>
   );
 };

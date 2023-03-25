@@ -20,6 +20,7 @@ import ProfileImage from "../Assets/ProfileImage.svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { Camera } from "expo-camera";
 import { BallIndicator } from "react-native-indicators";
+import * as ImageManipulator from 'expo-image-manipulator';
 const ScannedSlip = ({ navigation, route }) => {
   const [isLoading, setisLoading] = useState(false);
   const [TextReaded, setTextReaded] = useState("");
@@ -31,15 +32,34 @@ const ScannedSlip = ({ navigation, route }) => {
     if (cameraRef.current) {
       const options = { quality: 0.5 };
       const data = await cameraRef.current.takePictureAsync(options);
-      setCapturedImage(data);
+      console.log("befor",data);
+      onPictureTaken(data?.uri)
+      // setCapturedImage(data);
     }
   };
 
+
+  onPictureTaken = async (data) => {
+    console.log(".....",data);
+    try {
+      const resizedImage = await ImageManipulator.manipulateAsync(
+        data,
+        [{ resize: { width: 2000, height: 2000 } }],
+        { compress: 0.7, format: 'jpeg' }
+      );
+      setCapturedImage(resizedImage?.uri);
+      console.log(resizedImage,"eeeerrrrrrrrrrrrr");
+      // Use the resizedImage object
+    } catch (error) {
+      // Handle error
+    }
+  };
+  
   const ScannedImage = async () => {
     setisLoading(true);
     const formData = new FormData();
     formData.append("image", {
-      uri: capturedImage?.uri,
+      uri: capturedImage,
       type: "image/jpg",
       name: "test.jpg",
     });
@@ -55,19 +75,20 @@ const ScannedSlip = ({ navigation, route }) => {
       });
       const result = await response.json();
       console.log(result, "result,:.......");
-      // if (result?.ErrorMessage) {
-      //   Alert.alert("Sorry", result?.ErrorMessage[0]);
-      //   setisLoading(false);
-      //   setCapturedImage(null);
-      // } else if (result?.ParsedResults) {
-      //   setTextReaded(result);
-      //   setisLoading(false);
-      //   setCapturedImage(null);
-      // } else {
-      //   setisLoading(false);
-      //   setCapturedImage(null);
-      //   alert("Something wrong tryagain");
-      // }
+      if (result?.ErrorMessage) {
+        Alert.alert("Sorry", result?.ErrorMessage[0]);
+        setisLoading(false);
+        setCapturedImage(null);
+      } else if (result?.ParsedResults) {
+        // setTextReaded(result);
+        setisLoading(false);
+        setCapturedImage(null);
+        gotoDb(result)
+      } else {
+        setisLoading(false);
+        setCapturedImage(null);
+        alert("Something wrong tryagain");
+      }
     } catch (error) {
       setisLoading(false);
       setCapturedImage(null);
@@ -76,10 +97,10 @@ const ScannedSlip = ({ navigation, route }) => {
     }
   };
 
-  const gotoDb = () => {
+  const gotoDb = (result) => {
     navigation?.navigate("Calculatingsummary", {
       item: route?.params,
-      ScannedText: TextReaded,
+      ScannedText: result,
     });
   };
   return (
@@ -100,7 +121,7 @@ const ScannedSlip = ({ navigation, route }) => {
         <Text style={styles.myGroup}>{route?.params?.GrouName}</Text>
         <View style={styles.MyGroupSpace}>
           {capturedImage != null ? (
-            <Image source={{ uri: capturedImage?.uri }} style={styles.camera} />
+            <Image source={{ uri: capturedImage }} style={styles.camera} />
           ) : (
             <Camera ref={cameraRef} style={styles.camera} type={type}></Camera>
           )}
