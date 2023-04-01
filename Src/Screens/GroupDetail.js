@@ -64,6 +64,9 @@ permember=0
   }else{
     permember=items?.price / member?.length;
   } 
+
+
+
   console.log(items);
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -71,7 +74,6 @@ permember=0
         style={{
           height: Dimensions.get("window").height,
           width: Dimensions.get("window").width,
-          // backgroundColor: "#EAF0F7",
         }}
       >
         <View style={styles.Logo}>
@@ -93,14 +95,20 @@ permember=0
               justifyContent: "center",
             }}
           >
-            <Text style={{ left: 20 }}>
-              {" "}
+            <Text style={{ left: 20,marginTop:10 }}>{items?.paid+" "+"Paid for"+"\n "}</Text>
+            <ScrollView>
               {items != undefined
-                ? items?.paid+" "+"Paid for"+" "+items?.item
+                ?items?.item?.map((val)=>{
+            return(<Text style={{ left: 20 }}>
+              {val?.name}
+            </Text>)
+               
+                })
                 : items == undefined
-                ? "There are no transactions to display"
+                ? <Text>"There are no transactions to display"</Text>
                 : ""}
-            </Text>
+            </ScrollView>
+            
           </View>
 
           <Text style={{ ...styles.myGroup, fontSize: 16, marginTop: 15 }}>

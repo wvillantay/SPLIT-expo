@@ -17,6 +17,7 @@ import Calculatingsummary from './Src/Screens/Calculatingsummary';
 import AddMannully from './Src/Screens/AddMannully';
 import ItemForms from './Src/Screens/ItemsForms';
 import AddMember from './Src/Screens/AddMember';
+import AddMannullybyUSer from './Src/Screens/AddMunallybyuser';
 export default function App() {
   const [loading, setisloading] = useState(true);
   const [user, setUser] = useState(null);
@@ -66,6 +67,8 @@ console.log(user?.email);
             <Stack.Screen name="AddMannully" component={AddMannully} />
             <Stack.Screen name="ItemForms" component={ItemForms} />
             <Stack.Screen name="AddMember" component={AddMember} />
+            <Stack.Screen name="AddMannullybyUSer" component={AddMannullybyUSer} />
+
 
 
 

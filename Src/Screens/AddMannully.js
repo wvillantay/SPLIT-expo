@@ -39,50 +39,47 @@ const AddMannully = ({ navigation, route }) => {
   const [FriendsList, setFriendsList] = useState([]);
   const Auth = getAuth(app);
   const db = getFirestore(app);
-  const isFocused=useIsFocused()
-
- console.log(getAuth(app)?.currentUser.uid,"ppp");
+  const isFocused = useIsFocused();
+  const { ScannedText } = route?.params;
+  console.log(Name?.name);
 
   const addmember = async () => {
-    
     if (price == 0) {
       alert("Enter Price");
     } else if (name == "") {
       alert("Enter Item name");
     } else {
       await setDoc(doc(db, "Item", route?.params?.GrouName), {
-        item: name,
-        price: price,
-        paid:Name?.name
+        item: ScannedText?.items,
+        price: ScannedText?.total,
+        paid: Name?.name,
       })
         .then((res) => {
           Alert.alert("Success !", "Item added");
-     
+          navigation.navigate("Home")
         })
         .catch((e) => {
+          Alert.alert("Sorry!","SomeThing Wrong")
           console.log(e, "ee");
         });
     }
   };
 
-
-const getdata=async()=>{
+  const getdata = async () => {
+    console.log(",,,,");
     const docRef = doc(db, "userprofiles", getAuth(app)?.currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        // console.log(docSnap.data());
-        setName(docSnap.data())
-}
+    const docSnap = await getDoc(docRef);
+    console.log(docSnap.data(),",,,.....,////");
+    setName(docSnap.data());
+  };
 
   useEffect(() => {
-    setname(route?.params?.item==undefined?"item":route?.params?.item);
+    setname(route?.params?.item == undefined ? "item" : route?.params?.item);
     setprice(route?.params?.total);
-
-getdata()
-
-
+    getdata();
   }, [isFocused]);
 
-console.log(Name?.name);
+  console.log(Name,"...",);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -99,7 +96,7 @@ console.log(Name?.name);
         <Text style={styles.myGroup}>Add Expense</Text>
         <View style={{ height: "65%", top: 15 }}>
           <ScrollView style={{}}>
-            {["1"].map((val) => {
+            {ScannedText?.items.map((val) => {
               return (
                 <View
                   style={{
@@ -108,6 +105,7 @@ console.log(Name?.name);
                     borderWidth: 1,
                     alignSelf: "center",
                     flexDirection: "row",
+                    marginTop: 10,
                   }}
                 >
                   <View
@@ -118,7 +116,7 @@ console.log(Name?.name);
                       alignItems: "center",
                     }}
                   >
-                    <Text>{name}</Text>
+                    <Text style={{width:"80%"}}>{val?.name}</Text>
                   </View>
                   <View
                     style={{
@@ -129,13 +127,13 @@ console.log(Name?.name);
                       justifyContent: "space-evenly",
                     }}
                   >
-                    <Text>{"$" + price}</Text>
+                    <Text>{val?.price+" "+"USD"}</Text>
                     <TouchableOpacity
-                      onPress={() =>
-                        navigation?.navigate("ItemForms", route?.params)
-                      }
+                      // onPress={() =>
+                      //   // navigation?.navigate("ItemForms", route?.params)
+                      // }
                     >
-                      <FontAwesome5Icon name="pen" />
+                      {/* <FontAwesome5Icon name="pen" /> */}
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -151,25 +149,14 @@ console.log(Name?.name);
             })}
           </ScrollView>
         </View>
-        <TouchableOpacity
-          onPress={() => addmember()
-          }
-          style={styles.PlusButton}
-        >
+        <TouchableOpacity onPress={() => addmember()} style={styles.PlusButton}>
           <FontAwesome5Icon name="arrow-right" size={25} color={"black"} />
         </TouchableOpacity>
         <View style={styles.bottomLayerConaner}>
           <BottomLayer />
         </View>
       </View>
-      <PermissionPop
-        isOpen={isShow}
-        onCamera={() => onCamera()}
-        onGallary={() => onGallary()}
-        onClose={() => {
-          setisShow(false);
-        }}
-      />
+    
     </SafeAreaView>
   );
 };

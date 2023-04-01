@@ -106,7 +106,7 @@ import {
           </View>
           <TouchableOpacity
           onPress={()=>{
-           navigation?.navigate("AddMannully",{total:Price,item:Name,GrouName:route?.params?.GrouName})
+           navigation?.navigate("AddMannullybyUSer",{total:Price,item:Name,GrouName:route?.params?.GrouName})
           }}
             style={styles.PlusButton}
           >

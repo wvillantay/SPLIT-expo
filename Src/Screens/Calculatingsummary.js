@@ -12,6 +12,8 @@ import {
 import React, { useState } from "react";
 import BottomLayer from "..//Assets/BottomLayer.svg";
 import Logo from "../Assets/Logo.svg";
+import Edit from "../Assets/Edit.svg";
+
 import LeftArrow from "../Assets/LeftArrow.svg";
 import HomeImage from "../Assets/HomeImage.svg";
 import ProfileImage from "../Assets/ProfileImage.svg";
@@ -21,8 +23,10 @@ import Order_light from "..//Assets/Order_light.svg";
 const Calculatingsummary = ({ navigation, route }) => {
   const [TextReaded, setTextReaded] = useState("");
   const [capturedImage, setCapturedImage] = useState(null);
-  const Texts = route?.params?.ScannedText?.ParsedResults[0]?.ParsedText;
+  const { title, ScannedText, item } = route?.params;
+  // const Texts = route?.params?.ScannedText?.ParsedResults[0]?.ParsedText;
 
+  console.log(ScannedText, ".....");
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -42,7 +46,7 @@ const Calculatingsummary = ({ navigation, route }) => {
           <View
             style={{
               width: "80%",
-              height: 100,
+              height: "20%",
               alignSelf: "center",
               backgroundColor: "#CBF6DC",
               borderRadius: 10,
@@ -50,16 +54,16 @@ const Calculatingsummary = ({ navigation, route }) => {
             }}
           >
             <Text
-              style={{ textAlign: "center", fontWeight: "bold", fontSize: 16 }}
+              style={{ textAlign: "center", fontWeight: "bold", fontSize: 18 }}
             >
-              {Texts.substr(0, 22)}
+              {title}
             </Text>
           </View>
 
           <View
             style={{
               width: "80%",
-              height: 300,
+              height: "80%",
               alignSelf: "center",
               borderRadius: 10,
               flexDirection: "column",
@@ -67,21 +71,59 @@ const Calculatingsummary = ({ navigation, route }) => {
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 18, fontWeight: "bold" }}>Total</Text>
-            <Text>
-              {Texts.slice(Texts.indexOf("$") + 33, Texts.indexOf("$") + 39)}
-            </Text>
+            <View style={{ height: "50%", marginTop: 15, width: "100%" }}>
+              <ScrollView>
+                {ScannedText?.items?.map((item) => {
+                  return (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        marginTop: 10,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontWeight: "bold",
+                          letterSpacing: 1,
+                          width: "40%",
+                        }}
+                      >
+                        {item?.name}
+                      </Text>
+                      <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                        {item?.price + " " + "USD"}
+                      </Text>
+                      <TouchableOpacity>
+                        {/* <Edit /> */}
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                Total
+              </Text>
+              <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+                { ScannedText?.total + " " + "USD"}
+              </Text>
+            </View>
           </View>
         </View>
         <TouchableOpacity
           onPress={() =>
             navigation.navigate("AddMannully", {
-              total: Texts.slice(
-                Texts.indexOf("$") + 33,
-                Texts.indexOf("$") + 39
-              ),
+              total:1,
               item: "item",
-              GrouName:route?.params?.item?.GrouName
+              GrouName: route?.params?.item?.GrouName,
+              ScannedText:ScannedText
             })
           }
           style={styles.PlusButton}

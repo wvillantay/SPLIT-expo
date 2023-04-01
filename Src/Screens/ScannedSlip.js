@@ -11,98 +11,76 @@ import {
 } from "react-native";
 import React, { useEffect, useState, useRef } from "react";
 import BottomLayer from "..//Assets/BottomLayer.svg";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import Logo from "../Assets/Logo.svg";
 import LeftArrow from "../Assets/LeftArrow.svg";
 import CameraIcon from "../Assets/CameraIcon.svg";
-
 import HomeImage from "../Assets/HomeImage.svg";
 import ProfileImage from "../Assets/ProfileImage.svg";
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
 import { Camera } from "expo-camera";
-import { BallIndicator } from "react-native-indicators";
-import * as ImageManipulator from 'expo-image-manipulator';
+import { manipulateAsync } from "expo-image-manipulator";
+
+import uuid from "uuid";
+import { getReceiptInfo } from "./Sources";
+import { extractData } from "./ExtractData";
+
 const ScannedSlip = ({ navigation, route }) => {
   const [isLoading, setisLoading] = useState(false);
-  const [TextReaded, setTextReaded] = useState("");
+  const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [TextReaded, setImageUrl] = useState("");
+  const [ImageUrl, setTextReaded] = useState("");
+
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [capturedImage, setCapturedImage] = useState(null);
   const cameraRef = useRef(null);
 
   const takePicture = async () => {
     if (cameraRef.current) {
-      const options = { quality: 0.5 };
-      const data = await cameraRef.current.takePictureAsync(options);
-      console.log("befor",data);
-      onPictureTaken(data?.uri)
-      // setCapturedImage(data);
-    }
-  };
-
-
-  onPictureTaken = async (data) => {
-    console.log(".....",data);
-    try {
-      const resizedImage = await ImageManipulator.manipulateAsync(
-        data,
-        [{ resize: { width: 2000, height: 2000 } }],
-        { compress: 0.7, format: 'jpeg' }
+      const data = await cameraRef.current.takePictureAsync();
+      const manipResult = await manipulateAsync(
+        data?.uri,
+        [{ resize: { width: 450, height: 600 } }],
+        { format: "jpeg", base64: true }
       );
-      setCapturedImage(resizedImage?.uri);
-      console.log(resizedImage,"eeeerrrrrrrrrrrrr");
-      // Use the resizedImage object
-    } catch (error) {
-      // Handle error
-    }
-  };
-  
-  const ScannedImage = async () => {
-    setisLoading(true);
-    const formData = new FormData();
-    formData.append("image", {
-      uri: capturedImage,
-      type: "image/jpg",
-      name: "test.jpg",
-    });
-
-    try {
-      const response = await fetch("https://tecnorn.online/api/V1/report/ocr", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Accept: "application/json",
-        },
-        body: formData,
-      });
-      const result = await response.json();
-      console.log(result, "result,:.......");
-      if (result?.ErrorMessage) {
-        Alert.alert("Sorry", result?.ErrorMessage[0]);
-        setisLoading(false);
-        setCapturedImage(null);
-      } else if (result?.ParsedResults) {
-        // setTextReaded(result);
-        setisLoading(false);
-        setCapturedImage(null);
-        gotoDb(result)
-      } else {
-        setisLoading(false);
-        setCapturedImage(null);
-        alert("Something wrong tryagain");
+      if (manipResult.uri != undefined) {
+        const firebaseURL = await uploadImageAsync(manipResult.uri);
+        console.log(firebaseURL);
+        var imageData = await getReceiptInfo(firebaseURL);
+        console.log(imageData, "/////");
+        var extractedData = await extractData(imageData);
+        console.log(imageData[0],'/....');
+        if (extractedData) {
+          navigation?.navigate("Calculatingsummary", {
+            item: route?.params,
+            ScannedText: extractedData,
+            title:imageData[0]
+          });
+        }
       }
-    } catch (error) {
-      setisLoading(false);
-      setCapturedImage(null);
-      // alert("Something wrong tryagain");
-      console.error(error, "......");
+    }
+
+    async function uploadImageAsync(uri) {
+      const blob = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          resolve(xhr.response);
+        };
+        xhr.onerror = function (e) {
+          console.log(e);
+          reject(new TypeError("Network request failed"));
+        };
+        xhr.responseType = "blob";
+        xhr.open("GET", uri, true);
+        xhr.send(null);
+      });
+      const fileRef = ref(getStorage(), uuid.v4());
+      const result = await uploadBytes(fileRef, blob);
+      blob.close();
+      return await getDownloadURL(fileRef);
     }
   };
 
-  const gotoDb = (result) => {
-    navigation?.navigate("Calculatingsummary", {
-      item: route?.params,
-      ScannedText: result,
-    });
-  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -127,22 +105,10 @@ const ScannedSlip = ({ navigation, route }) => {
           )}
         </View>
         <TouchableOpacity
-          onPress={() =>
-            TextReaded != ""
-              ? gotoDb()
-              : capturedImage != null
-              ? ScannedImage()
-              : takePicture()
-          }
+          onPress={() => takePicture()}
           style={styles.PlusButton}
         >
-          {isLoading ? (
-            <BallIndicator color="blue" />
-          ) : capturedImage != null || TextReaded != "" ? (
-            <FontAwesome5Icon name="arrow-right" size={25} color={"black"} />
-          ) : (
-            <CameraIcon style={{ alignSelf: "center", top: 20 }} />
-          )}
+          <CameraIcon style={{ alignSelf: "center", top: 20 }} />
         </TouchableOpacity>
 
         <View style={styles.bottomLayerConaner}>

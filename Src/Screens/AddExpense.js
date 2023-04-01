@@ -24,7 +24,7 @@ const AddExpense = ({ navigation, route }) => {
   const [allGroups, setallGroups] = useState([]);
   const [image, setimage] = useState(null);
   const [TextReaded, setTextReaded] = useState("");
-
+const {ScannedText, item}=route?.params
   console.log(route?.params, "...");
 
   return (
@@ -33,7 +33,6 @@ const AddExpense = ({ navigation, route }) => {
         style={{
           height: Dimensions.get("window").height,
           width: Dimensions.get("window").width,
-          // backgroundColor: "#EAF0F7",
         }}
       >
         <View style={styles.Logo}>
@@ -46,7 +45,7 @@ const AddExpense = ({ navigation, route }) => {
         <View style={styles.MyGroupSpace}>
           <TouchableOpacity
             onPress={() => {
-              navigation?.navigate("AddMannully", route?.params);
+              navigation?.navigate("AddMannullybyUSer", route?.params);
             }}
             style={{
               height: 50,
